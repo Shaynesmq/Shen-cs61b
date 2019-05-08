@@ -12,7 +12,7 @@ public class ArrayDeque<T> {
     }
 
     private Boolean checkRatio() {
-        if (size / items.length <= 0.25 && items.length > 8) {
+        if ((double) size / items.length <= 0.25 && items.length > 8) {
             return true;
         }
         return false;
@@ -23,9 +23,10 @@ public class ArrayDeque<T> {
             T[] a = (T[]) new Object[items.length * 2];
             if (nextLast < nextFirst) {
                 System.arraycopy(items, 0, a, a.length / 4, size);
+            } else {
+                System.arraycopy(items, nextLast, a, a.length / 4, size - nextLast);
+                System.arraycopy(items, 0, a, a.length / 4 + size - nextLast, nextLast);
             }
-            System.arraycopy(items, nextLast, a, a.length / 4, size - nextLast);
-            System.arraycopy(items, 0, a, a.length / 4 + size - nextLast, nextLast);
             nextFirst = a.length / 4 - 1;
             nextLast = 3 * a.length / 4;
             items = a;
