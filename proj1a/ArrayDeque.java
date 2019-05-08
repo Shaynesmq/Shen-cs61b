@@ -107,9 +107,9 @@ public class ArrayDeque<T> {
         if (size == 0) {
             return null;
         }
-        
+
         resize();
-        if (nextLast == -1) {
+        if (nextLast == 0) {
             nextLast = items.length;
         }
         T target = items[nextLast - 1];
