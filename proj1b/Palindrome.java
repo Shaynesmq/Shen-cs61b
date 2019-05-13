@@ -49,7 +49,8 @@ public class Palindrome {
         return isPalindrome(wordDeque, true);
     }
 
-    private boolean isPalindrome(Deque<Character> wordDeque, boolean isForNow, CharacterComparator cc) {
+    private boolean isPalindrome(Deque<Character> wordDeque,
+                                 boolean isForNow, CharacterComparator cc) {
         if (!isForNow) {
             return false;
         }
