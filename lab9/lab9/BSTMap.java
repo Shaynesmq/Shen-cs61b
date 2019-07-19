@@ -159,8 +159,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             }
             Node t = p;
             p = min(p.right);
-            p.left = t.left;
             p.right = deleteMin(t.right);
+            p.left = t.left;
         }
         return p;
     }
@@ -198,5 +198,14 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     @Override
     public Iterator<K> iterator() {
         return keySet().iterator();
+    }
+
+    public static void main(String[] args) {
+        BSTMap<String, Integer> b = new BSTMap<String, Integer>();
+        b.put("hi", 1);
+        b.put("hello", 2);
+        b.put("hey", 3);
+        b.put("i", 4);
+        b.remove("hi");
     }
 }
