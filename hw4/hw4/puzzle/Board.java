@@ -116,6 +116,10 @@ public class Board implements WorldState {
         }
 
         Board that = (Board) y;
+        if (state.length != that.state.length) {
+            return false;
+        }
+
         for (int i = 0; i < N; i += 1) {
             for (int j = 0; j < N; j += 1) {
                 if (state[i][j] != that.state[i][j]) {
