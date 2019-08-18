@@ -68,24 +68,19 @@ public class Router {
                     vv.distTo = x.distTo + g.distance(x.id, v);
                     vv.edgeTo = x.id;
                     vv.ed = vv.distTo + g.distance(v, d);
-                    q.remove(vv);
                     q.add(vv);
                 }
             }
         }
 
-        Stack<Long> rePath = new Stack<>();
+        ArrayList<Long> path = new ArrayList<>();
         long p = d;
-        rePath.push(p);
+        path.add(p);
         while (p != s) {
-            rePath.push(nodes.get(p).edgeTo);
+            path.add(nodes.get(p).edgeTo);
             p = nodes.get(p).edgeTo;
         }
-
-        ArrayList<Long> path = new ArrayList<>();
-        while (!rePath.isEmpty()) {
-            path.add(rePath.pop());
-        }
+        Collections.reverse(path);
         return path; // FIXME
     }
 
