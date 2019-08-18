@@ -45,8 +45,8 @@ public class Router {
         }
 
         PriorityQueue<GraphDB.Node> q = new PriorityQueue<>(new NodeComparator());
-        edgeTo.put(s, s);
-        distTo.put(s, (double) 0);
+        edgeTo.replace(s, s);
+        distTo.replace(s, (double) 0);
         q.add(g.nodes.get(s));
 
         while (!q.isEmpty()) {
