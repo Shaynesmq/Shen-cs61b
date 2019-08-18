@@ -23,7 +23,7 @@ import java.util.Map;
 public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
-    private final Map<Long, Node> nodes = new LinkedHashMap<>();
+    final Map<Long, Node> nodes = new LinkedHashMap<>();
 
     static class Node {
         long id;

@@ -12,23 +12,6 @@ import java.util.regex.Pattern;
  * down to the priority you use to order your vertices.
  */
 public class Router {
-    static class ANode implements Comparable<ANode> {
-        long id;
-        long edgeTo;
-        double distTo;
-        double ed;
-
-        ANode(long id) {
-            this.id = id;
-            this.edgeTo = 0;
-            this.distTo = Double.POSITIVE_INFINITY;
-            this.ed = Double.POSITIVE_INFINITY;
-        }
-
-        public int compareTo(ANode that) {
-            return Double.compare(this.ed, that.ed);
-        }
-    }
     /**
      * Return a List of longs representing the shortest path from the node
      * closest to a start location and the node closest to the destination
@@ -42,49 +25,53 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        Map<Long, ANode> nodes = new HashMap<>();
-        for (long v : g.vertices()) {
-            nodes.put(v, new ANode(v));
-        }
+        Map<Long, Long> edgeTo = new HashMap<>();
+        Map<Long, Double> distTo = new HashMap<>();
         long s = g.closest(stlon, stlat);
         long d = g.closest(destlon, destlat);
 
-        PriorityQueue<ANode> q = new PriorityQueue<>();
-        nodes.get(s).edgeTo = s;
-        nodes.get(s).distTo = 0;
-        nodes.get(s).ed = g.distance(s, d) + nodes.get(s).distTo;
-        q.add(nodes.get(s));
+        class NodeComparator implements Comparator<GraphDB.Node> {
+            @Override
+            public int compare(GraphDB.Node n1, GraphDB.Node n2) {
+                double d1 = distTo.get(n1.id) + g.distance(n1.id, d);
+                double d2 = distTo.get(n2.id) + g.distance(n2.id, d);
+                return Double.compare(d1, d2);
+            }
+        }
+
+        for (long v : g.vertices()) {
+            edgeTo.put(v, (long) 0);
+            distTo.put(v, (double) Double.POSITIVE_INFINITY);
+        }
+
+        PriorityQueue<GraphDB.Node> q = new PriorityQueue<>(new NodeComparator());
+        edgeTo.put(s, s);
+        distTo.put(s, (double) 0);
+        q.add(g.nodes.get(s));
 
         while (!q.isEmpty()) {
-            ANode x = q.poll();
+            GraphDB.Node x = q.poll();
 
             if (x.id == d) {
                 break;
             }
 
             for (long v : g.adjacent(x.id)) {
-                ANode vv = nodes.get(v);
-                if (vv.distTo > x.distTo + g.distance(x.id, v)) {
-                    vv.distTo = x.distTo + g.distance(x.id, v);
-                    vv.edgeTo = x.id;
-                    vv.ed = vv.distTo + g.distance(v, d);
-                    q.remove(vv);
-                    q.add(vv);
+                if (distTo.get(v) > distTo.get(x.id) + g.distance(x.id, v)) {
+                    distTo.replace(v, distTo.get(x.id) + g.distance(x.id, v));
+                    edgeTo.replace(v, x.id);
+                    q.remove(g.nodes.get(v));
+                    q.add(g.nodes.get(v));
                 }
             }
         }
 
-        Stack<Long> rePath = new Stack<>();
-        long p = d;
-        rePath.push(p);
-        while (p != s) {
-            rePath.push(nodes.get(p).edgeTo);
-            p = nodes.get(p).edgeTo;
-        }
-
         ArrayList<Long> path = new ArrayList<>();
-        while (!rePath.isEmpty()) {
-            path.add(rePath.pop());
+        long p = d;
+        path.add(0, p);
+        while (p != s) {
+            path.add(0, edgeTo.get(p));
+            p = edgeTo.get(p);
         }
         return path; // FIXME
     }
