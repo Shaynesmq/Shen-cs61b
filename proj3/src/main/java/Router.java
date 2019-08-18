@@ -67,9 +67,9 @@ public class Router {
         }
 
         ArrayList<Long> path = new ArrayList<>();
-        long p = d;
+        Long p = d;
         path.add(0, p);
-        while (p != s) {
+        while (!p.equals(s)) {
             path.add(0, edgeTo.get(p));
             p = edgeTo.get(p);
         }
