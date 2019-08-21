@@ -17,7 +17,7 @@ public class RadixSort {
      */
     public static String[] sort(String[] asciis) {
         // TODO: Implement LSD Sort
-        int R = 128;
+        int R = 256;
 
         int longest = 0;
         for (String s : asciis) {
