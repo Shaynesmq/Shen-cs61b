@@ -31,11 +31,10 @@ public class RadixSort {
         for (int d = longest - 1; d >= 0; d--) {
             int[] counts = new int[R];
             for (int i = 0; i < auxx.length; i++) {
-                int diff = longest - auxx[i].length();
-                if (d < diff) {
+                if (d >= auxx[i].length()) {
                     counts[0]++;
                 } else {
-                    counts[(int) auxx[i].charAt(d - diff)]++;
+                    counts[(int) auxx[i].charAt(d)]++;
                 }
             }
 
@@ -49,10 +48,10 @@ public class RadixSort {
             for (int i = 0; i < auxx.length; i++) {
                 int diff = longest - auxx[i].length();
                 int p;
-                if (d < diff) {
+                if (d >= auxx[i].length()) {
                     p = starts[0]++;
                 } else {
-                    char c = auxx[i].charAt(d - diff);
+                    char c = auxx[i].charAt(d);
                     p = starts[(int) c]++;
                 }
                 aux[p] = auxx[i];
