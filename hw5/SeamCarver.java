@@ -1,8 +1,5 @@
 import edu.princeton.cs.algs4.Picture;
 
-import java.awt.*;
-import java.util.Comparator;
-
 public class SeamCarver {
     private Picture picture;
     private int width;
@@ -15,7 +12,7 @@ public class SeamCarver {
     }
 
     public Picture picture() {
-        return picture;
+        return new Picture(this.picture);
     }
 
     public int width() {
@@ -27,8 +24,12 @@ public class SeamCarver {
     }
 
     public double energy(int x, int y) {
-        if (x < 0 || x >= width) throw new IndexOutOfBoundsException();
-        if (y < 0 || y >= height) throw new IndexOutOfBoundsException();
+        if (x < 0 || x >= width) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (y < 0 || y >= height) {
+            throw new IndexOutOfBoundsException();
+        }
 
         int lx = x == 0 ? width - 1 : x - 1;
         int rx = x == width - 1 ? 0 : x + 1;
@@ -63,17 +64,14 @@ public class SeamCarver {
         int[] result = new int[width];
 
         double[][] costGrid = new double[height][width];
-        int[][] path = new int[height][width];
 
         for (int y = 0; y < height; y++) {
             costGrid[y][0] = energy(0, y);
-            path[y][0] = y;
         }
 
         for (int x = 1; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                path[y][x] = findMinY(x - 1, y, costGrid);
-                costGrid[y][x] = costGrid[path[y][x]][x - 1] + energy(x, y);
+                costGrid[y][x] = costGrid[findMinY(x - 1, y, costGrid)][x - 1] + energy(x, y);
             }
         }
 
@@ -89,7 +87,7 @@ public class SeamCarver {
         int x = width - 1;
         while (x > 0) {
             result[x] = minEnd;
-            minEnd = path[minEnd][x];
+            minEnd = findMinY(x - 1, minEnd, costGrid);
             x--;
         }
         result[x] = minEnd;
@@ -98,6 +96,10 @@ public class SeamCarver {
     }
 
     private int findMinY(int x, int y, double[][] cg) {
+        if (height == 1) {
+            return y;
+        }
+
         if (y == 0) {
             return cg[y][x] > cg[y + 1][x] ? y + 1 : y;
         } else if (y == height - 1) {
@@ -123,17 +125,14 @@ public class SeamCarver {
         int[] result = new int[height];
 
         double[][] costGrid = new double[height][width];
-        int[][] path = new int[height][width];
 
         for (int x = 0; x < width; x++) {
             costGrid[0][x] = energy(x, 0);
-            path[0][x] = x;
         }
 
         for (int y = 1; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                path[y][x] = findMinX(x, y - 1, costGrid);
-                costGrid[y][x] = costGrid[y - 1][path[y][x]] + energy(x, y);
+                costGrid[y][x] = costGrid[y - 1][findMinX(x, y - 1, costGrid)] + energy(x, y);
             }
         }
 
@@ -149,7 +148,7 @@ public class SeamCarver {
         int y = height - 1;
         while (y > 0) {
             result[y] = minEnd;
-            minEnd = path[y][minEnd];
+            minEnd = findMinX(minEnd, y - 1, costGrid);
             y--;
         }
         result[y] = minEnd;
@@ -158,6 +157,10 @@ public class SeamCarver {
     }
 
     private int findMinX(int x, int y, double[][] cg) {
+        if (width == 1) {
+            return x;
+        }
+
         if (x == 0) {
             return cg[y][x] > cg[y][x + 1] ? x + 1 : x;
         } else if (x == width - 1) {
